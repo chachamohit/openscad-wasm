@@ -1,0 +1,45 @@
+// Japa Mala Tally Counter Ring - OpenSCAD Model
+// Parameters
+$fn = 100;  // Resolution for curves
+
+// Ring dimensions
+inner_diameter = 20;      // mm (finger hole)
+outer_diameter = 30;      // mm (total outer size)
+thickness = 8;            // mm (ring thickness)
+
+// Button dimensions and placement
+button_diameter = 6;      // mm (button diameter)
+button_depth = 1.5;       // mm (button depression depth)
+button_offset_angle = 0;  // degrees (0 = right side)
+button_radial_pos = outer_diameter/2 - button_diameter/2;  // Position from center
+
+// Create the basic ring (hollow cylinder)
+module ring() {
+    difference() {
+        // Outer ring
+        cylinder(r=outer_diameter/2, h=thickness, center=false);
+        // Inner cutout for finger
+        translate([0,0,-1])
+            cylinder(r=inner_diameter/2, h=thickness+2, center=false);
+    }
+}
+
+// Create the button (a circular depression on the side)
+module button() {
+    // Calculate button center coordinates (positioned along x-axis)
+    x_pos = button_radial_pos * cos(button_offset_angle);
+    y_pos = button_radial_pos * sin(button_offset_angle);
+    
+    // The button is created as a depression: subtract a small cylinder
+    translate([x_pos, y_pos, thickness/2 - button_depth/2])
+        cylinder(r=button_diameter/2, h=button_depth, center=true);
+}
+
+// Combine ring and button
+difference() {
+    ring();
+    button();
+}
+
+// Note: You can add more details such as cutouts for charging pins or compartments for the PCB/battery 
+// by modifying the code further.
